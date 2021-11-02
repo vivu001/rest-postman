@@ -42,7 +42,7 @@ public class ZahlungController {
     }
 
     @PostMapping("zahlungsarten")
-    public Zahlungsart createZahlungsart(@RequestBody Zahlungsart zahlungsart) {
+    public Zahlungsart createPayment(@RequestBody Zahlungsart zahlungsart) {
         return this.zahlungsartRepo.save(zahlungsart);
     }
 }
