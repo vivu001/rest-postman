@@ -30,4 +30,14 @@ public class KundeController {
     public Kunde createCustomer(@RequestBody Kunde kunde) {
         return this.kundeService.createCustomer(kunde);
     }
+
+    @PutMapping("kunden/{id}")
+    public Kunde modifyCustomer(@PathVariable int id, @RequestBody Kunde kunde) {
+        return this.kundeService.changeCustomer(id, kunde);
+    }
+
+    @DeleteMapping("kunden/{id}")
+    public Kunde deleteCustomer(@PathVariable int id) {
+        return this.kundeService.deleteCustomer(id);
+    }
 }

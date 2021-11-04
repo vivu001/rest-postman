@@ -2,7 +2,6 @@ package componentware.restpostman.controller;
 
 import componentware.restpostman.model.Zahlung;
 import componentware.restpostman.model.Zahlungsart;
-import componentware.restpostman.repo.ZahlungRepo;
 import componentware.restpostman.repo.ZahlungsartRepo;
 import componentware.restpostman.service.ZahlungService;
 import org.springframework.web.bind.annotation.*;
@@ -32,17 +31,36 @@ public class ZahlungController {
 //    }
 
     @PostMapping("zahlungsarten/{id}/zahlungen")
-    public Zahlung createPayment(@PathVariable("id") int zahlungsartId,@RequestBody Zahlung zahlung) {
+    public Zahlung createPayment(@PathVariable("id") int zahlungsartId, @RequestBody Zahlung zahlung) {
         return this.zahlungService.savePayment(zahlungsartId, zahlung);
     }
 
+    @PutMapping("zahlungsarten/{zahlungsartId}/zahlungen/{zahlungId}")
+    public Zahlung modifyPayment(@PathVariable("zahlungsartId") int zahlungsartId,
+                                 @PathVariable("zahlungId") int zahlungId,
+                                 @RequestBody Zahlung zahlung) {
+        return this.zahlungService.changePayment(zahlungsartId, zahlungId, zahlung);
+    }
+
+    @DeleteMapping("zahlungen/{id}")
+    public Zahlung deletePayment(@PathVariable int id) {
+        return this.zahlungService.deletePayment(id);
+    }
+
     @GetMapping("zahlungsarten")
-    public List<Zahlungsart> getAllCustomers() {
+    public List<Zahlungsart> getAllPaymentMethods() {
         return this.zahlungsartRepo.findAll();
     }
 
     @PostMapping("zahlungsarten")
-    public Zahlungsart createPayment(@RequestBody Zahlungsart zahlungsart) {
+    public Zahlungsart createPaymentMethod(@RequestBody Zahlungsart zahlungsart) {
         return this.zahlungsartRepo.save(zahlungsart);
+    }
+
+    @DeleteMapping("zahlungsarten/{id}")
+    public Zahlungsart deletePaymentMethod(@PathVariable int id) {
+        Zahlungsart toDeletePaymentMethod = this.zahlungsartRepo.getById(id);
+        this.zahlungsartRepo.deleteById(id);
+        return toDeletePaymentMethod;
     }
 }
