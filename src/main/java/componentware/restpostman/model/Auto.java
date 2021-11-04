@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.validation.constraints.Min;
 
 @Entity
-@Setter
 @Getter
 @NoArgsConstructor
 public class Auto {
@@ -22,16 +21,19 @@ public class Auto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Setter
     private String hersteller;
+
+    @Setter
     private String model;
 
+    @Setter
     @Min(1)
     private int sitzplaetzen;
 
     @Min(1)
     private int anzahl;
 
-    @Min(1)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int verfuegbar;
 
@@ -40,6 +42,15 @@ public class Auto {
         this.model = model;
         this.sitzplaetzen = sitzplaetzen;
         this.anzahl = anzahl;
-        verfuegbar = anzahl;
+        verfuegbar += anzahl;
+    }
+
+    public void setAnzahl(int anzDesNeuenAutos) {
+        this.anzahl += anzDesNeuenAutos;
+        this.verfuegbar += anzDesNeuenAutos;
+    }
+
+    public void resetAnzahl() {
+        this.anzahl = this.verfuegbar = 0;
     }
 }

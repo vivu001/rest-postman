@@ -28,8 +28,8 @@ public class AutoService {
         Auto toAddAuto = this.autoRepo.findByHerstellerIgnoreCaseAndModelIgnoreCaseAndSitzplaetzen(auto.getHersteller(), auto.getModel(), auto.getSitzplaetzen())
                 .stream()
                 .peek((existingAuto) -> {
-                    existingAuto.setAnzahl(existingAuto.getAnzahl() + auto.getAnzahl());
-                    existingAuto.setVerfuegbar(existingAuto.getVerfuegbar() + auto.getAnzahl());
+                    existingAuto.setAnzahl(auto.getAnzahl());
+//                    existingAuto.setVerfuegbar(existingAuto.getVerfuegbar() + auto.getAnzahl());
                 })
                 .findFirst()
                 .orElse(new Auto(auto.getHersteller(), auto.getModel(), auto.getSitzplaetzen(), auto.getAnzahl()));
@@ -37,9 +37,15 @@ public class AutoService {
     }
 
     public Auto modifyCar(int id, Auto newAuto) {
-        this.autoRepo.findById(id).orElseThrow(() -> new InvalidParameterException("Es existiert kein Auto mit ID " + id));
-        this.autoRepo.delete(newAuto);
-        return newAuto;
+        Auto auto = this.autoRepo.findById(id).orElseThrow(() -> new InvalidParameterException("Es existiert kein Auto mit ID " + id));
+        auto.setHersteller(newAuto.getHersteller());
+        auto.setModel(newAuto.getModel());
+        auto.setSitzplaetzen(newAuto.getSitzplaetzen());
+
+        auto.resetAnzahl();
+        auto.setAnzahl(newAuto.getAnzahl());
+
+        return this.autoRepo.save(auto);
     }
 
     public Auto deleteCar(int id) {
