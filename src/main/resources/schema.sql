@@ -16,10 +16,9 @@ CREATE TABLE auto (
     id INT AUTO_INCREMENT PRIMARY KEY,
     hersteller VARCHAR(50) NOT NULL,
     model VARCHAR(50),
-    farbe VARCHAR(20),
     sitzplaetzen INT NOT NULL,
     anzahl INT NOT NULL,
-    verfuegbar INT NOT NULL
+    verfuegbar INT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE zahlungsart (

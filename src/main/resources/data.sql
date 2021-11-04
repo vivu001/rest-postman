@@ -11,14 +11,14 @@ VALUES ('Mueller','Laura ','1995-12-23','laura.mueller@gmail.com');
 
 -- Auto
 
-INSERT INTO auto (hersteller, model, farbe, sitzplaetzen, anzahl, verfuegbar)
-VALUES ('VW','Golf','schwarz', 5, 20, 14);
+INSERT INTO auto (hersteller, model, sitzplaetzen, anzahl, verfuegbar)
+VALUES ('VW','Golf', 5, 20, 14);
 
-INSERT INTO auto (hersteller, model, farbe, sitzplaetzen, anzahl, verfuegbar)
-VALUES ('Ford','Fiesta','blau', 4, 7, 5);
+INSERT INTO auto (hersteller, model, sitzplaetzen, anzahl, verfuegbar)
+VALUES ('Ford','Fiesta', 4, 7, 5);
 
-INSERT INTO auto (hersteller, model, farbe, sitzplaetzen, anzahl, verfuegbar)
-VALUES ('Peugeot','Boxer','rot', 7, 10, 4);
+INSERT INTO auto (hersteller, model, sitzplaetzen, anzahl, verfuegbar)
+VALUES ('Peugeot','Boxer', 7, 10, 4);
 
 -- Zahlungsart
 

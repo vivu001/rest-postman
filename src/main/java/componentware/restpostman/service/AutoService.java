@@ -20,14 +20,21 @@ public class AutoService {
         return this.autoRepo.findAll();
     }
 
-    public Auto getCarById(int id) {
-        return this.autoRepo.findById(id).orElse(null);
+    public List<Auto> getCarByHersteller(String hersteller) {
+        return this.autoRepo.getAllByHerstellerIgnoreCase(hersteller);
     }
 
-//    public Auto addCar(Auto auto) {
-//        this.autoRepo.findById(auto.id).orElseThrow(() -> new InvalidParameterException("Es existiert kein Auto mit ID " + id));
-//        return this.autoRepo.save(auto);
-//    }
+    public Auto addCar(Auto auto) {
+        Auto toAddAuto = this.autoRepo.findByHerstellerIgnoreCaseAndModelIgnoreCaseAndSitzplaetzen(auto.getHersteller(), auto.getModel(), auto.getSitzplaetzen())
+                .stream()
+                .peek((existingAuto) -> {
+                    existingAuto.setAnzahl(existingAuto.getAnzahl() + auto.getAnzahl());
+                    existingAuto.setVerfuegbar(existingAuto.getVerfuegbar() + auto.getAnzahl());
+                })
+                .findFirst()
+                .orElse(new Auto(auto.getHersteller(), auto.getModel(), auto.getSitzplaetzen(), auto.getAnzahl()));
+        return this.autoRepo.save(toAddAuto);
+    }
 
     public Auto modifyCar(int id, Auto newAuto) {
         this.autoRepo.findById(id).orElseThrow(() -> new InvalidParameterException("Es existiert kein Auto mit ID " + id));

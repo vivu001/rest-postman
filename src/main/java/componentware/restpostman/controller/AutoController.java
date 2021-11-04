@@ -22,15 +22,14 @@ public class AutoController {
         return this.autoService.getAllCars();
     }
 
-    @GetMapping("autos/{id}")
-    public Auto getCar(@PathVariable("id") int id) {
-        return this.autoService.getCarById(id);
+    @GetMapping("autos/{hersteller}")
+    public List<Auto> getCar(@PathVariable("hersteller") String hersteller) {
+        return this.autoService.getCarByHersteller(hersteller);
     }
 
     @PostMapping("autos")
     public Auto addCar(@RequestBody Auto auto) {
-//        return this.autoService.addCar(auto);
-        return null;
+        return this.autoService.addCar(auto);
     }
 
     @PutMapping("autos/{id}")
