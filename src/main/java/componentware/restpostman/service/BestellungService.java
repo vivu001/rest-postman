@@ -7,6 +7,7 @@ import componentware.restpostman.repo.KundeRepo;
 import componentware.restpostman.repo.ZahlungRepo;
 import org.springframework.stereotype.Service;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 
 @Service
@@ -36,13 +37,34 @@ public class BestellungService {
     }
 
     public Bestellung saveBooking(int kundeId, int autoId, int zahlungId, Bestellung bestellung) {
+        bestellung.setBestellungId(mapBestellungId(kundeId, autoId, zahlungId));
+        return this.bestellungRepo.save(bestellung);
+    }
+
+    public Bestellung changeBooking(int kundeId, int autoId, int zahlungId, Bestellung bestellung) {
+        Bestellung existierteBestellung = this.bestellungRepo.findById(mapBestellungId(kundeId, autoId, zahlungId))
+                .orElseThrow(() -> new InvalidParameterException("Die Bestellung existiert nicht."));
+
+        existierteBestellung.setDauer(bestellung.getDauer());
+        existierteBestellung.setStartdatum(bestellung.getStartdatum());
+
+        return this.bestellungRepo.save(existierteBestellung);
+    }
+
+    public Bestellung deleteBooking(int kundeId, int autoId, int zahlungId) {
+
+        Bestellung toDeleteBestellung = this.bestellungRepo.findById(mapBestellungId(kundeId, autoId, zahlungId))
+                .orElseThrow(() -> new InvalidParameterException("Die Bestellung existiert nicht."));
+
+        this.bestellungRepo.delete(toDeleteBestellung);
+        return toDeleteBestellung;
+    }
+
+    private BestellungId mapBestellungId(int kundeId, int autoId, int zahlungId) {
         Kunde kunde = this.kundeRepo.getById(kundeId);
         Auto auto = this.autoRepo.getById(autoId);
         Zahlung zahlung = this.zahlungRepo.getById(zahlungId);
 
-        BestellungId bestellungId = new BestellungId(kunde, auto, zahlung);
-        bestellung.setBestellungId(bestellungId);
-
-        return this.bestellungRepo.save(bestellung);
+        return new BestellungId(kunde, auto, zahlung);
     }
 }

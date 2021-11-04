@@ -34,4 +34,20 @@ public class BestellungController {
         return this.bestellungService.saveBooking(kundeId, autoId, zahlungId, bestellung);
     }
 
+    @PutMapping("/kunden/{kundeId}/autos/{autoId}/zahlungen/{zahlungId}/bestellungen")
+    public Bestellung modifyBooking(@PathVariable("kundeId") int kundeId,
+                                    @PathVariable("autoId") int autoId,
+                                    @PathVariable("zahlungId") int zahlungId,
+                                    @RequestBody Bestellung bestellung) {
+        return this.bestellungService.changeBooking(kundeId, autoId, zahlungId, bestellung);
+    }
+
+    @DeleteMapping("/kunden/{kundeId}/autos/{autoId}/zahlungen/{zahlungId}/bestellungen")
+    public Bestellung deleteBooking(@PathVariable("kundeId") int kundeId,
+                                    @PathVariable("autoId") int autoId,
+                                    @PathVariable("zahlungId") int zahlungId) {
+        return this.bestellungService.deleteBooking(kundeId, autoId, zahlungId);
+    }
+
+
 }

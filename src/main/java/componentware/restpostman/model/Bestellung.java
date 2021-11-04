@@ -1,6 +1,8 @@
 package componentware.restpostman.model;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.EmbeddedId;
@@ -16,6 +18,7 @@ public class Bestellung {
     private BestellungId bestellungId;
 
     @CreationTimestamp
+    @Setter(AccessLevel.NONE)
     private LocalDateTime datum;
 
     private LocalDate startdatum;
