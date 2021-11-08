@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface KundeRepo extends JpaRepository<Kunde, Integer> {
-    List<Kunde> findAllByNachname(String nachname);
+    List<Kunde> findAllByNachnameIgnoreCase(String nachname);
 }

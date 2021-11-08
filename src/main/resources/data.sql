@@ -7,7 +7,7 @@ INSERT INTO kunde (vorname, nachname, geburtsdatum, email)
 VALUES ('Kuelke','Manfred','1976-04-01','manfred.kuelke0203@aol.com');
 
 INSERT INTO kunde (vorname, nachname, geburtsdatum, email)
-VALUES ('Laura','Mueller ','1995-12-23','laura.mueller@gmail.com');
+VALUES ('Laura','Mueller','1995-12-23','laura.mueller@gmail.com');
 
 -- Auto
 

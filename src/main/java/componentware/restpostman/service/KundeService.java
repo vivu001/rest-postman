@@ -21,7 +21,7 @@ public class KundeService {
     }
 
     public List<Kunde> getCustomerByLastName(String nachname) {
-        return kundeRepo.findAllByNachname(nachname);
+        return kundeRepo.findAllByNachnameIgnoreCase(nachname);
     }
 
     public Kunde createCustomer(Kunde kunde) {

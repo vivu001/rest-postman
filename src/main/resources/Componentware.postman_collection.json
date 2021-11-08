@@ -1,0 +1,750 @@
+{
+	"info": {
+		"_postman_id": "a3c29be4-8895-47cc-ad8f-2e1fa8b9e7f9",
+		"name": "Componentware",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Kunde",
+			"item": [
+				{
+					"name": "Alle Kunden",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const customers = pm.response.json();\r",
+									"\r",
+									"pm.test('Number of customers = ' + customers.length, function () {\r",
+									"    pm.expect(customers.length).to.equal(3);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/kunden",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"kunden"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kunde",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"const newCustomer = pm.response.json();\r",
+									"\r",
+									"pm.test('Nachname der neuen Kunden ist ' + newCustomer.nachname, function () {\r",
+									"    pm.expect(newCustomer.nachname).to.equal(\"Schneider\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nachname\": \"Schneider\",\r\n    \"vorname\": \"Thomas\",\r\n    \"geburtsdatum\": \"1998-03-11\",\r\n    \"email\": \"thomas08@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/kunden",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"kunden"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kunde",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// pm.variables.set('customerName', pm.request.url.variables.get('nachname'));\r",
+									"// console.log(pm.variables.get('customerName'));\r",
+									"\r",
+									"const customer = pm.response.json();\r",
+									"\r",
+									"pm.test('Der Kunde mit Nachname ' + customer.nachname + ' existiert', function () {\r",
+									"    pm.expect(customer).not.equal(null);\r",
+									"});\r",
+									"\r",
+									"pm.test('Vorname der Kunden ist ' + customer[0].vorname, function () {\r",
+									"    pm.expect(customer[0].vorname).to.equal(\"Laura\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/kunden/:nachname",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"kunden",
+								":nachname"
+							],
+							"query": [
+								{
+									"key": "nachname",
+									"value": "Mueller",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "nachname",
+									"value": "Mueller"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kunde",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful PUT request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"});\r",
+									"\r",
+									"const toChangeCustomer = pm.response.json();\r",
+									"\r",
+									"pm.test('Das neue Geburtsdatum der Kunden ist ' + toChangeCustomer.geburtsdatum, function () {\r",
+									"    pm.expect(toChangeCustomer.geburtsdatum).to.equal(\"1993-12-10\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nachname\": \"Schneider\",\r\n    \"vorname\": \"Thomas\",\r\n    \"geburtsdatum\": \"1993-12-10\",\r\n    \"email\": \"thomas08@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/kunden/:id",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"kunden",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kunde",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful DELETE request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"});\r",
+									"\r",
+									"const toDeleteCustomer = pm.response.json();\r",
+									"const customerID = pm.request.url.variables.get('id');\r",
+									"\r",
+									"pm.test('Der Kunde mit ID ' + customerID + ' wurde geloescht', function () {\r",
+									"    pm.expect(toDeleteCustomer).equal(null);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/kunden/:id",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"kunden",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auto",
+			"item": [
+				{
+					"name": "Auto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \r\n    \"hersteller\": \"BMW\",\r\n    \"model\": \"X3\",\r\n    \"farbe\": \"grau\",\r\n    \"sitzplaetzen\": 5,\r\n    \"anzahl\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/autos",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"autos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Alle Autos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/autos",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"autos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ein Auto",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/autos/:id",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"autos",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ein Auto",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/autos/:id",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"autos",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Auto Copy",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"hersteller\": \"Ford\",\r\n        \"model\": \"Explorer\",\r\n        \"sitzplaetzen\": 7,\r\n        \"anzahl\": 8       \r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/autos/:id",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"autos",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Zahlung",
+			"item": [
+				{
+					"name": "Zahlungsarten",
+					"item": [
+						{
+							"name": "Alle Arten",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{port}}{{base-url}}/zahlungsarten",
+									"host": [
+										"{{host}}{{port}}{{base-url}}"
+									],
+									"path": [
+										"zahlungsarten"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Zahlungsart",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"beschreibung\": \"bar\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}{{port}}{{base-url}}/zahlungsarten",
+									"host": [
+										"{{host}}{{port}}{{base-url}}"
+									],
+									"path": [
+										"zahlungsarten"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eine Zahlungsart",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{port}}{{base-url}}/zahlungsarten/:id",
+									"host": [
+										"{{host}}{{port}}{{base-url}}"
+									],
+									"path": [
+										"zahlungsarten",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Alle Zahlungen",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/zahlungen",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"zahlungen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eine Zahlung",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"betrag\": 100.0,\r\n    \"bezahlt\": true   \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/zahlungsarten/:id/zahlungen",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"zahlungsarten",
+								":id",
+								"zahlungen"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eine Zahlung",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/zahlungen/:id",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"zahlungen",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eine Zahlung",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"betrag\": 100.0,\r\n    \"bezahlt\": true   \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/zahlungsarten/:zahlungsartId/zahlungen/:zahlungsId",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"zahlungsarten",
+								":zahlungsartId",
+								"zahlungen",
+								":zahlungsId"
+							],
+							"variable": [
+								{
+									"key": "zahlungsartId",
+									"value": "2"
+								},
+								{
+									"key": "zahlungsId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bestellung",
+			"item": [
+				{
+					"name": "Eine Bestellung",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"startdatum\": \"2021-12-20\",\r\n     \"dauer\": 7\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/kunden/:kundeId/autos/:autoId/zahlungen/:zahlungId/bestellungen",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"kunden",
+								":kundeId",
+								"autos",
+								":autoId",
+								"zahlungen",
+								":zahlungId",
+								"bestellungen"
+							],
+							"variable": [
+								{
+									"key": "kundeId",
+									"value": "3"
+								},
+								{
+									"key": "autoId",
+									"value": "1"
+								},
+								{
+									"key": "zahlungId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Alle Bestellungen eines Kunden",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/bestellungen/kunden/:kundeid",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"bestellungen",
+								"kunden",
+								":kundeid"
+							],
+							"variable": [
+								{
+									"key": "kundeid",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Alle Bestellungen",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/bestellungen",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"bestellungen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eine Bestellung",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"startdatum\": \"2022-01-03\",\r\n     \"dauer\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/kunden/:kundeId/autos/:autoId/zahlungen/:zahlungId/bestellungen",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"kunden",
+								":kundeId",
+								"autos",
+								":autoId",
+								"zahlungen",
+								":zahlungId",
+								"bestellungen"
+							],
+							"variable": [
+								{
+									"key": "kundeId",
+									"value": "1"
+								},
+								{
+									"key": "autoId",
+									"value": "2"
+								},
+								{
+									"key": "zahlungId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eine Bestellung",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/kunden/:kundeId/autos/:autoId/zahlungen/:zahlungId/bestellungen",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"kunden",
+								":kundeId",
+								"autos",
+								":autoId",
+								"zahlungen",
+								":zahlungId",
+								"bestellungen"
+							],
+							"variable": [
+								{
+									"key": "kundeId",
+									"value": "1"
+								},
+								{
+									"key": "autoId",
+									"value": "2"
+								},
+								{
+									"key": "zahlungId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
