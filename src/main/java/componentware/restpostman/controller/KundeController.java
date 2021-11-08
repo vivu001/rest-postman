@@ -2,6 +2,8 @@ package componentware.restpostman.controller;
 
 import componentware.restpostman.model.Kunde;
 import componentware.restpostman.service.KundeService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,27 +19,27 @@ public class KundeController {
     }
 
     @GetMapping("kunden")
-    public List<Kunde> getAllCustomers() {
-        return this.kundeService.getAllCustomers();
+    public ResponseEntity<List<Kunde>> getAllCustomers() {
+        return new ResponseEntity<>(this.kundeService.getAllCustomers(), HttpStatus.OK);
     }
 
     @GetMapping("kunden/{nachname}")
-    public List<Kunde> getCustomer(@PathVariable("nachname") String nachname) {
-        return this.kundeService.getCustomerByLastName(nachname);
+    public ResponseEntity<List<Kunde>> getCustomers(@PathVariable("nachname") String nachname) {
+        return new ResponseEntity<>(this.kundeService.getCustomerByLastName(nachname), HttpStatus.OK);
     }
 
     @PostMapping("kunden")
-    public Kunde createCustomer(@RequestBody Kunde kunde) {
-        return this.kundeService.createCustomer(kunde);
+    public ResponseEntity<Kunde> createCustomer(@RequestBody Kunde kunde) {
+        return new ResponseEntity<>(this.kundeService.createCustomer(kunde), HttpStatus.CREATED);
     }
 
     @PutMapping("kunden/{id}")
-    public Kunde modifyCustomer(@PathVariable int id, @RequestBody Kunde kunde) {
-        return this.kundeService.changeCustomer(id, kunde);
+    public ResponseEntity<Kunde> modifyCustomer(@PathVariable int id, @RequestBody Kunde kunde) {
+        return new ResponseEntity<>(this.kundeService.changeCustomer(id, kunde), HttpStatus.OK);
     }
 
     @DeleteMapping("kunden/{id}")
-    public Kunde deleteCustomer(@PathVariable int id) {
-        return this.kundeService.deleteCustomer(id);
+    public ResponseEntity<Kunde> deleteCustomer(@PathVariable int id) {
+        return new ResponseEntity<>(this.kundeService.deleteCustomer(id), HttpStatus.OK);
     }
 }
