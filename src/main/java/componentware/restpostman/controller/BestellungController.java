@@ -2,6 +2,8 @@ package componentware.restpostman.controller;
 
 import componentware.restpostman.model.Bestellung;
 import componentware.restpostman.service.BestellungService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,36 +19,36 @@ public class BestellungController {
     }
 
     @GetMapping("bestellungen")
-    public List<Bestellung> getAllBookings() {
-        return this.bestellungService.findAllBookings();
+    public ResponseEntity<List<Bestellung>> getAllBookings() {
+        return new ResponseEntity<>(this.bestellungService.findAllBookings(), HttpStatus.OK);
     }
 
     @GetMapping("bestellungen/kunden/{kundeId}")
-    public List<Bestellung> getBookingsByCustomer(@PathVariable int kundeId) {
-        return this.bestellungService.findAllByKundeId(kundeId);
+    public ResponseEntity<List<Bestellung>> getBookingsByCustomer(@PathVariable int kundeId) {
+        return new ResponseEntity<>(this.bestellungService.findAllByKundeId(kundeId), HttpStatus.OK);
     }
 
     @PostMapping("/kunden/{kundeId}/autos/{autoId}/zahlungen/{zahlungId}/bestellungen")
-    public Bestellung createBooking(@PathVariable("kundeId") int kundeId,
+    public ResponseEntity<Bestellung> createBooking(@PathVariable("kundeId") int kundeId,
                                     @PathVariable("autoId") int autoId,
                                     @PathVariable("zahlungId") int zahlungId,
                                     @RequestBody Bestellung bestellung) {
-        return this.bestellungService.saveBooking(kundeId, autoId, zahlungId, bestellung);
+        return new ResponseEntity<>(this.bestellungService.saveBooking(kundeId, autoId, zahlungId, bestellung), HttpStatus.CREATED);
     }
 
     @PutMapping("/kunden/{kundeId}/autos/{autoId}/zahlungen/{zahlungId}/bestellungen")
-    public Bestellung modifyBooking(@PathVariable("kundeId") int kundeId,
+    public ResponseEntity<Bestellung> modifyBooking(@PathVariable("kundeId") int kundeId,
                                     @PathVariable("autoId") int autoId,
                                     @PathVariable("zahlungId") int zahlungId,
                                     @RequestBody Bestellung bestellung) {
-        return this.bestellungService.changeBooking(kundeId, autoId, zahlungId, bestellung);
+        return new ResponseEntity<>(this.bestellungService.changeBooking(kundeId, autoId, zahlungId, bestellung), HttpStatus.OK);
     }
 
     @DeleteMapping("/kunden/{kundeId}/autos/{autoId}/zahlungen/{zahlungId}/bestellungen")
-    public Bestellung deleteBooking(@PathVariable("kundeId") int kundeId,
+    public ResponseEntity<Bestellung> deleteBooking(@PathVariable("kundeId") int kundeId,
                                     @PathVariable("autoId") int autoId,
                                     @PathVariable("zahlungId") int zahlungId) {
-        return this.bestellungService.deleteBooking(kundeId, autoId, zahlungId);
+        return new ResponseEntity<>(this.bestellungService.deleteBooking(kundeId, autoId, zahlungId), HttpStatus.OK);
     }
 
 

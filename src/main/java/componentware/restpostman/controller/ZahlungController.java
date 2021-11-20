@@ -4,8 +4,11 @@ import componentware.restpostman.model.Zahlung;
 import componentware.restpostman.model.Zahlungsart;
 import componentware.restpostman.repo.ZahlungsartRepo;
 import componentware.restpostman.service.ZahlungService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 
 @RestController
@@ -21,8 +24,8 @@ public class ZahlungController {
     }
 
     @GetMapping("zahlungen")
-    public List<Zahlung> getPayments() {
-        return this.zahlungService.getAllPayments();
+    public ResponseEntity<List<Zahlung>> getPayments() {
+        return new ResponseEntity<>(this.zahlungService.getAllPayments(), HttpStatus.OK);
     }
 
 //    @GetMapping("zahlungen/{bestellungId}")
@@ -31,36 +34,37 @@ public class ZahlungController {
 //    }
 
     @PostMapping("zahlungsarten/{id}/zahlungen")
-    public Zahlung createPayment(@PathVariable("id") int zahlungsartId, @RequestBody Zahlung zahlung) {
-        return this.zahlungService.savePayment(zahlungsartId, zahlung);
+    public ResponseEntity<Zahlung> createPayment(@PathVariable("id") int zahlungsartId, @RequestBody Zahlung zahlung) {
+        return new ResponseEntity<>(this.zahlungService.savePayment(zahlungsartId, zahlung), HttpStatus.CREATED);
     }
 
     @PutMapping("zahlungsarten/{zahlungsartId}/zahlungen/{zahlungId}")
-    public Zahlung modifyPayment(@PathVariable("zahlungsartId") int zahlungsartId,
+    public ResponseEntity<Zahlung> modifyPayment(@PathVariable("zahlungsartId") int zahlungsartId,
                                  @PathVariable("zahlungId") int zahlungId,
                                  @RequestBody Zahlung zahlung) {
-        return this.zahlungService.changePayment(zahlungsartId, zahlungId, zahlung);
+        return new ResponseEntity<>(this.zahlungService.changePayment(zahlungsartId, zahlungId, zahlung), HttpStatus.OK);
     }
 
     @DeleteMapping("zahlungen/{id}")
-    public Zahlung deletePayment(@PathVariable int id) {
-        return this.zahlungService.deletePayment(id);
+    public ResponseEntity<Zahlung> deletePayment(@PathVariable int id) {
+        return new ResponseEntity<>(this.zahlungService.deletePayment(id), HttpStatus.OK);
     }
 
     @GetMapping("zahlungsarten")
-    public List<Zahlungsart> getAllPaymentMethods() {
-        return this.zahlungsartRepo.findAll();
+    public ResponseEntity<List<Zahlungsart>> getAllPaymentMethods() {
+        return new ResponseEntity<>(this.zahlungsartRepo.findAll(), HttpStatus.OK);
     }
 
     @PostMapping("zahlungsarten")
-    public Zahlungsart createPaymentMethod(@RequestBody Zahlungsart zahlungsart) {
-        return this.zahlungsartRepo.save(zahlungsart);
+    public ResponseEntity<Zahlungsart> createPaymentMethod(@RequestBody Zahlungsart zahlungsart) {
+        return new ResponseEntity<>(this.zahlungsartRepo.save(zahlungsart), HttpStatus.CREATED);
     }
 
     @DeleteMapping("zahlungsarten/{id}")
-    public Zahlungsart deletePaymentMethod(@PathVariable int id) {
-        Zahlungsart toDeletePaymentMethod = this.zahlungsartRepo.getById(id);
+    public ResponseEntity<Zahlungsart> deletePaymentMethod(@PathVariable int id) {
+        Zahlungsart toDeletePaymentMethod = this.zahlungsartRepo.findById(id)
+                .orElseThrow(() -> new InvalidParameterException("Die Zahlungsart mit id " + id + " existiert nicht."));
         this.zahlungsartRepo.deleteById(id);
-        return toDeletePaymentMethod;
+        return new ResponseEntity<>(toDeletePaymentMethod, HttpStatus.OK);
     }
 }
