@@ -214,10 +214,14 @@
 									"});\r",
 									"\r",
 									"const toDeleteCustomer = pm.response.json();\r",
-									"const customerID = pm.request.url.variables.get('id');\r",
+									"// console.log(toDeleteCustomer)\r",
+									"// const customerID = pm.request.url.variables.get('id');\r",
 									"\r",
-									"pm.test('Der Kunde mit ID ' + customerID + ' wurde geloescht', function () {\r",
-									"    pm.expect(toDeleteCustomer).equal(null);\r",
+									"pm.test('Der Kunde mit ID ' + toDeleteCustomer.id + ' wurde geloescht', () => {\r",
+									"    pm.sendRequest({url: \"http://localhost:8080/api/kunden/Mueller\", method: 'DELETE'},\r",
+									"    (err, response) => {        \r",
+									"        pm.expect(response).not.equal(null);\r",
+									"    });\r",
 									"});\r",
 									"\r",
 									""
@@ -254,13 +258,69 @@
 			"name": "Auto",
 			"item": [
 				{
+					"name": "Alle Autos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const customers = pm.response.json();\r",
+									"\r",
+									"pm.test('Number of cars = ' + customers.length, function () {\r",
+									"    pm.expect(customers.length).to.equal(3);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/autos",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"autos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Auto",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"const newAuto = pm.response.json();\r",
+									"\r",
+									"pm.test('Das neue Auto ist vom Hersteller ' + newAuto.hersteller, () => {\r",
+									"    pm.expect(newAuto.hersteller).to.equal(\"BMW\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{    \r\n    \"hersteller\": \"BMW\",\r\n    \"model\": \"X3\",\r\n    \"farbe\": \"grau\",\r\n    \"sitzplaetzen\": 5,\r\n    \"anzahl\": 4\r\n}",
+							"raw": "{    \r\n    \"hersteller\": \"BMW\",\r\n    \"model\": \"X3\",    \r\n    \"sitzplaetzen\": 5,\r\n    \"anzahl\": 4\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -280,40 +340,48 @@
 					"response": []
 				},
 				{
-					"name": "Alle Autos",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{host}}{{port}}{{base-url}}/autos",
-							"host": [
-								"{{host}}{{port}}{{base-url}}"
-							],
-							"path": [
-								"autos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Ein Auto",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"const autos = pm.response.json();\r",
+									"\r",
+									"pm.test('Das Auto mit Model ' + autos[0].model + ' existiert', () => {\r",
+									"    pm.expect(autos[0]).not.equal(null);\r",
+									"});\r",
+									"\r",
+									"pm.test('Das Auto besitzt ' + autos[0].sitzplaetzen + ' Plaetze', () => {\r",
+									"    pm.expect(autos[0].sitzplaetzen).to.equal(4);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}{{port}}{{base-url}}/autos/:id",
+							"raw": "{{host}}{{port}}{{base-url}}/autos/:hersteller",
 							"host": [
 								"{{host}}{{port}}{{base-url}}"
 							],
 							"path": [
 								"autos",
-								":id"
+								":hersteller"
 							],
 							"variable": [
 								{
-									"key": "id",
-									"value": "2"
+									"key": "hersteller",
+									"value": "ford"
 								}
 							]
 						}
@@ -322,6 +390,31 @@
 				},
 				{
 					"name": "Ein Auto",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful DELETE request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"});\r",
+									"\r",
+									"const toDeleteAuto = pm.response.json();\r",
+									"\r",
+									"pm.sendRequest(\r",
+									"    {url: \"http://localhost:8080/api/auto/1\", method: 'DELETE'},\r",
+									"    (response) => \r",
+									"        pm.test('Das Auto mit ID ' + toDeleteAuto.id + ' wurde geloescht'), () => {\r",
+									"            pm.expect(response).not.equal(null);\r",
+									"        }\r",
+									");\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -337,7 +430,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "2"
+									"value": "1"
 								}
 							]
 						}
@@ -345,7 +438,27 @@
 					"response": []
 				},
 				{
-					"name": "Auto Copy",
+					"name": "Ein Auto",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful PUT request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"});\r",
+									"\r",
+									"const toChangeAuto = pm.response.json();\r",
+									"\r",
+									"pm.test('Das Automodel wurde zu ' + toChangeAuto.model + ' geaendert', function () {\r",
+									"    pm.expect(toChangeAuto.model).to.equal('Explorer');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -387,6 +500,25 @@
 					"item": [
 						{
 							"name": "Alle Arten",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"  pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"const zahlungsarten = pm.response.json();\r",
+											"\r",
+											"pm.test('Anz der Zahlungsarten = ' + zahlungsarten.length, function () {\r",
+											"    pm.expect(zahlungsarten.length).to.equal(4);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -404,6 +536,26 @@
 						},
 						{
 							"name": "Zahlungsart",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful POST request\", function () {\r",
+											"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+											"});\r",
+											"\r",
+											"const zahlungsart = pm.response.json();\r",
+											"\r",
+											"pm.test('Die neue Zahlungsart: ' + zahlungsart.beschreibung, function () {\r",
+											"    pm.expect(zahlungsart.beschreibung).to.equal(\"bar\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -430,6 +582,30 @@
 						},
 						{
 							"name": "Eine Zahlungsart",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful DELETE request\", function () {\r",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+											"});\r",
+											"\r",
+											"const toDeleteZahlungsart = pm.response.json();\r",
+											"\r",
+											"pm.sendRequest(\r",
+											"    {url: \"http://localhost:8080/api/zahlungsarten/4\", method: 'DELETE'},\r",
+											"    (response) => \r",
+											"        pm.test('Die Zahlungsart mit ID ' + toDeleteZahlungsart.id + ' wurde geloescht'), () => {\r",
+											"            pm.expect(response).to.be.an('object').but.not.an('array');\r",
+											"        }\r",
+											");\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "DELETE",
 								"header": [],
@@ -456,6 +632,25 @@
 				},
 				{
 					"name": "Alle Zahlungen",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const zahlungen = pm.response.json();\r",
+									"\r",
+									"pm.test('Anz der Zahlungen = ' + zahlungen.length, function () {\r",
+									"    pm.expect(zahlungen.length).to.equal(4);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -473,6 +668,26 @@
 				},
 				{
 					"name": "Eine Zahlung",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"const zahlung = pm.response.json();\r",
+									"\r",
+									"pm.test('Die neue Zahlung = ' + zahlung.betrag, function () {    \r",
+									"    pm.expect(zahlung.betrag).to.equal(100.0);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -507,30 +722,44 @@
 				},
 				{
 					"name": "Eine Zahlung",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{host}}{{port}}{{base-url}}/zahlungen/:id",
-							"host": [
-								"{{host}}{{port}}{{base-url}}"
-							],
-							"path": [
-								"zahlungen",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "2"
-								}
-							]
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const toChangeZahlung = {\r",
+									"    \"betrag\": 100.0,\r",
+									"    \"bezahlt\": true   \r",
+									"};\r",
+									"\r",
+									"const putRequest = {\r",
+									"  url: 'http://localhost:8080/api/zahlungsarten/2/zahlungen/1',\r",
+									"  method: 'PUT',\r",
+									"  header: {\r",
+									"    'Content-Type': 'application/json',\r",
+									"    'X-Foo': 'bar'\r",
+									"  },\r",
+									"  body: {\r",
+									"    mode: 'raw',\r",
+									"    raw: JSON.stringify(toChangeZahlung)\r",
+									"  }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(putRequest,(response) => \r",
+									"        pm.test(\"Successful PUT request\",() => {\r",
+									"            pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"        }),\r",
+									"\r",
+									"        pm.test('Die Zahlung wurde aktualisiert'), () => {\r",
+									"             pm.expect(response).to.have.property('betrag', 'bezahlt');\r",
+									"             pm.expect(response).to.have.property('betrag').equal(toChangeZahlung.betrag);\r",
+									"        }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "Eine Zahlung",
+					],
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -567,6 +796,53 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Eine Zahlung",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.sendRequest(\r",
+									"    {url: \"http://localhost:8080/api/zahlungen/1\", method: 'DELETE'},\r",
+									"    (response) => {\r",
+									"        pm.test(\"Successful DELETE request\", function () {\r",
+									"            pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"        }),\r",
+									"\r",
+									"        pm.test('Die Zahlung wurde geloescht'), () => {\r",
+									"            pm.expect(response).to.be.an('object').but.not.an('array');\r",
+									"        }\r",
+									"    }\r",
+									");\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/zahlungen/:id",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"zahlungen",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -574,7 +850,81 @@
 			"name": "Bestellung",
 			"item": [
 				{
+					"name": "Alle Bestellungen",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const bestellungen = pm.response.json();\r",
+									"\r",
+									"pm.test('Anz der Zahlungen = ' + bestellungen.length, function () {\r",
+									"    pm.expect(bestellungen.length).to.equal(1);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}{{base-url}}/bestellungen",
+							"host": [
+								"{{host}}{{port}}{{base-url}}"
+							],
+							"path": [
+								"bestellungen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Eine Bestellung",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const bestellung = {\r",
+									"     \"startdatum\": \"2021-12-20\",\r",
+									"     \"dauer\": 7\r",
+									"};\r",
+									"\r",
+									"const putRequest = {\r",
+									"  url: 'http://localhost:8080/api/kunden/3/kunden/1/zahlungen/2/bestellungen',\r",
+									"  method: 'POST',\r",
+									"  header: {\r",
+									"    'Content-Type': 'application/json',\r",
+									"    'X-Foo': 'bar'\r",
+									"  },\r",
+									"  body: {\r",
+									"    mode: 'raw',\r",
+									"    raw: JSON.stringify(bestellung)\r",
+									"  }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(putRequest,(response) => \r",
+									"        pm.test(\"Successful POST request\",() => {\r",
+									"            pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"        }),\r",
+									"\r",
+									"        pm.test('Eine neue Bestellung wurde angelegt'), () => {\r",
+									"             pm.expect(response).to.have.property('startdatum', 'dauer');\r",
+									"             pm.expect(response).to.have.property('dauer').equal(bestellung.dauer);\r",
+									"        }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -621,6 +971,28 @@
 				},
 				{
 					"name": "Alle Bestellungen eines Kunden",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.sendRequest(\r",
+									"    { url: 'http://localhost:8080/api/bestellungen/kunden/1', method: 'GET'},\r",
+									"    (response) => \r",
+									"        pm.test(\"Successful POST request\",() => {\r",
+									"            pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"        }),\r",
+									"\r",
+									"        pm.test('Eine neue Bestellung wurde angelegt'), () => {\r",
+									"             pm.expect(response).not.equal(null);\r",
+									"             pm.expect(response).to.have.property('auto_id').equal(2);\r",
+									"        }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -645,24 +1017,45 @@
 					"response": []
 				},
 				{
-					"name": "Alle Bestellungen",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{host}}{{port}}{{base-url}}/bestellungen",
-							"host": [
-								"{{host}}{{port}}{{base-url}}"
-							],
-							"path": [
-								"bestellungen"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Eine Bestellung",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const toChangeBestellung = {\r",
+									"    \"startdatum\": \"2022-01-03\",\r",
+									"    \"dauer\": 5\r",
+									"};\r",
+									"\r",
+									"const putRequest = {\r",
+									"  url: 'http://localhost:8080/api/kunden/1/autos/2/zahlungen/1/bestellungen',\r",
+									"  method: 'PUT',\r",
+									"  header: {\r",
+									"    'Content-Type': 'application/json',\r",
+									"    'X-Foo': 'bar'\r",
+									"  },\r",
+									"  body: {\r",
+									"    mode: 'raw',\r",
+									"    raw: JSON.stringify(toChangeBestellung)\r",
+									"  }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(putRequest,(response) => \r",
+									"        pm.test(\"Successful PUT request\",() => {\r",
+									"            pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"        }),\r",
+									"\r",
+									"        pm.test('Die Zahlung wurde aktualisiert'), () => {\r",
+									"             pm.expect(response).not.equal(null);\r",
+									"             pm.expect(response).to.have.property('dauer').equal(toChangeBestellung.dauer);\r",
+									"        }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -709,6 +1102,30 @@
 				},
 				{
 					"name": "Eine Bestellung",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.sendRequest(\r",
+									"    {url: \"http://localhost:8080/api/kunden/1/autos/2/zahlungen/1/bestellungen'\", method: 'DELETE'},\r",
+									"    (response) => {\r",
+									"        pm.test(\"Successful DELETE request\", function () {\r",
+									"            pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+									"        }),\r",
+									"\r",
+									"        pm.test('Die Zahlung wurde geloescht'), () => {            \r",
+									"            pm.expect(response).to.be.an('object').but.not.an('array');\r",
+									"             pm.expect(response).to.have.property('dauer').equal(5);\r",
+									"        }\r",
+									"    }\r",
+									");\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [],
